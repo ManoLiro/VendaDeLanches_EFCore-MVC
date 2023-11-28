@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VendaDeLanches.Context;
+using VendaDeLanches.Models;
 using VendaDeLanches.Repositories;
 using VendaDeLanches.Repositories.Interfaces;
 
@@ -21,9 +22,14 @@ public class Startup
 
 		services.AddTransient<ICategoriaRepository,CategoriaRepository>();
 		services.AddTransient<ILanchesRepository, LancheRepository>();
+		services.AddScoped(sp => CarrinhoCompra.GetCarrinho(sp));
+		services.AddSingleton<IHttpContextAccessor,HttpContextAccessor>();
 
 		services.AddControllersWithViews();
-	}
+
+        services.AddMemoryCache();
+        services.AddSession();
+    }
 
 	// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 	public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -44,7 +50,7 @@ public class Startup
 		app.UseRouting();
 
 		app.UseAuthorization();
-
+		app.UseSession();
 		app.UseEndpoints(endpoints =>
 		{
 			endpoints.MapControllerRoute(

@@ -1,16 +1,32 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using VendaDeLanches.Context;
 using VendaDeLanches.Models;
+using VendaDeLanches.Repositories.Interfaces;
+using VendaDeLanches.ViewModels;
 
 namespace VendaDeLanches.Controllers
 {
 	public class HomeController : Controller
 	{
-		
 
-		public IActionResult Index()
+		private readonly ILanchesRepository _lanchesRepository;
+
+        public HomeController(ILanchesRepository lanchesRepository)
+        {
+            _lanchesRepository = lanchesRepository;
+        }
+
+        public IActionResult Index()
 		{
-			return View();
+			var LanchesFavoritos = _lanchesRepository.LanchesPreferidos;
+
+			var LanchesPreferidos = new HomeIndexViewModel()
+			{
+                LanchePreferidos = LanchesFavoritos
+			};
+
+            return View(LanchesPreferidos);
 		}
 
 
